@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Task</title>
+    <style>
+        .block {
+            height: 100px;
+            max-width: 50%;
+            background-color: pink;
+            margin: 10px auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .clicked {
+            box-shadow: 5px 5px 5px grey;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+
+    <script>
+        const container = document.getElementById('container');
+
+        let blocks = [];
+        const originalOrder = [];
+
+        for (let i = 1; i <= 100; i++) {
+            const div = document.createElement('div');
+            const currentElement = {
+                el: div,
+                position: i,
+            };
+
+            div.classList.add('block');
+            div.innerHTML = `<span>DIV - ${i}</span>`;
+
+
+            originalOrder.push(currentElement);
+            blocks.push(currentElement);
+
+            container.appendChild(div);
+        }
+        
+        for (const div of blocks) {
+            div.el.addEventListener('click', () => {
+                const classes = div.el.classList;
+
+                if (classes.contains("clicked")) {
+                    const currentBlocks = originalOrder.filter(
+                        element => !element.el.classList.contains("clicked"),
+                    );
+                    
+                    const beforeItem = currentBlocks.find(element => element.position > div.position);
+                    
+                    if (!beforeItem) {
+                        container.appendChild(div.el);
+                    } else {
+                        container.insertBefore(div.el, beforeItem.el);
+                    }
+
+                    blocks.splice(div.position, 0);
+                    div.el.classList.remove("clicked");
+                } else {
+                    container.insertBefore(div.el, container.firstChild);
+
+                    blocks.splice(blocks.indexOf(div), 1);
+                    blocks.unshift(div);
+
+                    div.el.classList.add("clicked");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
